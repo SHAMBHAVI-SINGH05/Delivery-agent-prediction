@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delivery Agent Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 30px;
+            background-color: #f7f7f7;
+        }
+        form input {
+            padding: 5px;
+            margin: 5px;
+        }
+        .result {
+            font-size: 20px;
+            margin-top: 20px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+    <h1>Predict Delivery Agents Needed</h1>
+
+    <form method="post">
+        <!-- Add all your input fields here -->
+        Date: <input type="number" name="Date" required><br>
+        Day: <input type="number" name="Day" required><br>
+        Hour: <input type="number" name="Hour" required><br>
+        Temperature: <input type="text" name="Temperature" required><br>
+        Rain: <input type="number" name="Rain" required><br>
+        Holiday: <input type="number" name="Holiday" required><br>
+        Offer: <input type="number" name="Offer" required><br>
+        Competitor: <input type="number" name="Competitor" required><br>
+        Orders: <input type="number" name="Orders" required><br>
+        Promised: <input type="number" name="Promised" required><br>
+        Actual: <input type="number" name="Actual" required><br>
+        Delivered: <input type="number" name="Delivered" required><br>
+        Early: <input type="number" name="Early" required><br>
+        Delay: <input type="number" name="Delay" required><br>
+        Cost: <input type="number" name="Cost" required><br>
+        JioMart: <input type="number" name="JioMart" required><br>
+        Swiggy: <input type="number" name="Swiggy" required><br>
+        Zepto: <input type="number" name="Zepto" required><br>
+        TrafficLow: <input type="number" name="TrafficLow" required><br>
+        TrafficMedium: <input type="number" name="TrafficMedium" required><br>
+        Food: <input type="number" name="Food" required><br>
+        Grocery: <input type="number" name="Grocery" required><br>
+        Urban: <input type="number" name="Urban" required><br>
+        <button type="submit">Predict</button>
+    </form>
+
+    {% if prediction %}
+        <div class="result">
+            <strong>Predicted Agents Required:</strong> {{ prediction }}
+        </div>
+    {% endif %}
+
+    {% if graph %}
+        <div style="margin-top:30px;">
+            <h3>📊 Actual vs Predicted Graph</h3>
+            <img src="{{ url_for('static', filename='graph_actual_vs_predicted.png') }}" alt="Graph"
+                 style="width: 80%; border:1px solid #ddd; padding:10px;">
+        </div>
+    {% endif %}
+</body>
+</html>
