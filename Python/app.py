@@ -39,12 +39,21 @@ app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='/static')
 
 MODEL_PATH = os.path.join(BASE_DIR, "lasso_model.pkl")
 SCALER_PATH = os.path.join(BASE_DIR, "agent_scaler.pkl")
+print("Starting app...")
 
-with open(MODEL_PATH, "rb") as f:
-    model = pickle.load(f)
+try:
+    with open(MODEL_PATH, "rb") as f:
+        model = pickle.load(f)
+    print("Model loaded successfully")
+except Exception as e:
+    print("MODEL ERROR:", e)
 
-with open(SCALER_PATH, "rb") as f:
-    scaler = pickle.load(f)
+try:
+    with open(SCALER_PATH, "rb") as f:
+        scaler = pickle.load(f)
+    print("Scaler loaded successfully")
+except Exception as e:
+    print("SCALER ERROR:", e)
 
 @app.route("/", methods=["GET", "POST"])
 def predict():
