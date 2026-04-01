@@ -4,12 +4,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import Ridge, Lasso
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
-import joblib
+import pickle
 
 
 # 1. Load and prepare dataset
 
-df = pd.read_csv('cleaned_encoded_delivery_dataset1.csv')
+df = pd.read_csv('../cleaned_encoded_delivery_dataset1.csv')
 X = df.drop(columns=['Agents Needed'])
 y = df['Agents Needed']
 
@@ -34,10 +34,11 @@ lasso.fit(X_train_scaled, y_train)
 
 # 5. Save Models and Scaler
 
-joblib.dump(ridge, 'ridge_model.pkl')
-joblib.dump(lasso, 'lasso_model.pkl')
-joblib.dump(scaler, 'agent_scaler.pkl')
+with open("lasso_model.pkl", "wb") as f:
+    pickle.dump(lasso, f)
 
+with open("agent_scaler.pkl", "wb") as f:
+    pickle.dump(scaler, f)
 # 5. Evaluation Function
 
 def evaluate_model(model, X_test, y_test):
@@ -56,9 +57,6 @@ print("Lasso Evaluation:", lasso_metrics)
 
 
 
-# Use trained model (Lasso in this case)
-model = joblib.load("lasso_model.pkl")
-scaler = joblib.load("agent_scaler.pkl")
 
 # Take feature names from dataset
 feature_names = list(X.columns)
@@ -76,6 +74,6 @@ for feature in feature_names:
 
 input_df = pd.DataFrame([user_input])
 input_scaled = scaler.transform(input_df)
-prediction = model.predict(input_scaled)
+prediction = lasso.predict(input_scaled)
 
 print(f"\n Predicted Agent Needed: {prediction[0]:.2f}")
