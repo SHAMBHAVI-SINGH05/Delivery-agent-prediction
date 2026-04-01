@@ -38,9 +38,13 @@ FEATURE_COLUMNS = [
 app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='/static')
 
 MODEL_PATH = os.path.join(BASE_DIR, "lasso_model.pkl")
+SCALER_PATH = os.path.join(BASE_DIR, "agent_scaler.pkl")
 
 with open(MODEL_PATH, "rb") as f:
     model = pickle.load(f)
+
+with open(SCALER_PATH, "rb") as f:
+    scaler = pickle.load(f)
 
 @app.route("/", methods=["GET", "POST"])
 def predict():
@@ -78,7 +82,8 @@ def predict():
             ], columns=FEATURE_COLUMNS)
 
             # Predict
-            pred = model.predict(sample)[0]
+            scaled_input = scaler.transform(sample)
+            pred = model.predict(scaled_input)[0]
             prediction = round(pred)
 
             # Generate a dummy graph (replace this with real y_test and y_pred if needed)

@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import Ridge, Lasso
+from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 import joblib
 
@@ -17,19 +18,25 @@ y = df['Agents Needed']
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+# 3. Scale Features
 
-# 3. Initialize and Train Models
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# 4. Initialize and Train Models
 
 ridge = Ridge(alpha=1.0)
 lasso = Lasso(alpha=0.1)
 
-ridge.fit(X_train, y_train)
-lasso.fit(X_train, y_train)
+ridge.fit(X_train_scaled, y_train)
+lasso.fit(X_train_scaled, y_train)
 
-# 4. Save Models
+# 5. Save Models and Scaler
 
 joblib.dump(ridge, 'ridge_model.pkl')
 joblib.dump(lasso, 'lasso_model.pkl')
+joblib.dump(scaler, 'agent_scaler.pkl')
 
 # 5. Evaluation Function
 
@@ -41,16 +48,17 @@ def evaluate_model(model, X_test, y_test):
     r2 = r2_score(y_test, pred)
     return {"MSE": mse, "RMSE": rmse, "MAE": mae, "R2 Score": r2}
 
-ridge_metrics = evaluate_model(ridge, X_test, y_test)
-lasso_metrics = evaluate_model(lasso, X_test, y_test)
+ridge_metrics = evaluate_model(ridge, X_test_scaled, y_test)
+lasso_metrics = evaluate_model(lasso, X_test_scaled, y_test)
 
 print("Ridge Evaluation:", ridge_metrics)
 print("Lasso Evaluation:", lasso_metrics)
 
 
 
-# Use trained model (Ridge in this case)
-model = joblib.load("ridge_model.pkl")
+# Use trained model (Lasso in this case)
+model = joblib.load("lasso_model.pkl")
+scaler = joblib.load("agent_scaler.pkl")
 
 # Take feature names from dataset
 feature_names = list(X.columns)
@@ -67,6 +75,7 @@ for feature in feature_names:
 
 
 input_df = pd.DataFrame([user_input])
-prediction = model.predict(input_df)
+input_scaled = scaler.transform(input_df)
+prediction = model.predict(input_scaled)
 
 print(f"\n Predicted Agent Needed: {prediction[0]:.2f}")
