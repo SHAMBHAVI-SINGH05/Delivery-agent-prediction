@@ -37,10 +37,13 @@ FEATURE_COLUMNS = [
 
 app = Flask(__name__, static_folder=STATIC_DIR, static_url_path='/static')
 
-# Load model and scaler
-with open("../agent_model.pkl", "rb") as f:
+MODEL_PATH = os.path.join(BASE_DIR, "agent_model.pkl")
+SCALER_PATH = os.path.join(BASE_DIR, "agent_scaler.pkl")
+
+with open(MODEL_PATH, "rb") as f:
     model = pickle.load(f)
-with open("../agent_scaler.pkl", "rb") as f:
+
+with open(SCALER_PATH, "rb") as f:
     scaler = pickle.load(f)
 
 @app.route("/", methods=["GET", "POST"])
